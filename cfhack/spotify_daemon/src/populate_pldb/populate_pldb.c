@@ -229,6 +229,33 @@ static void logged_in(sp_session *sess, sp_error error)
 	int num_pls = sp_playlistcontainer_num_playlists(pc);
 	printf("jukebox: Looking at %d playlists\n", num_pls );
 
+	printf( "This is how it begins" );
+
+	/*
+	char *pl_names[num_pls]; 
+	int pl_ids[num_pls]; 
+	// Not using char array of strings. Risk of seg faults. Need more time to handle.
+	*/
+
+	char *pl_name;
+
+	int id;
+	for( id=0; id < num_pls; id++ )
+	{
+		sp_playlist *pl = sp_playlistcontainer_playlist( pc, id );
+		
+		sp_playlist_add_callbacks(pl, &pl_callbacks, NULL);
+		pl_name = sp_playlist_name(pl); 
+
+		if( strlen(pl_name) > 0 )
+		{
+			printf( "%d :: %s \n", id, pl_name );
+		}
+	}
+
+
+	/* //uncomment this code if segfaults again	
+	
 	if( (g_playlist_id < 0) || (g_playlist_id >= num_pls) )
 	{
 		printf( "Playlist id %d is out of range of available playlists\n", g_playlist_id );
@@ -249,10 +276,14 @@ static void logged_in(sp_session *sess, sp_error error)
 		fflush(stdout);
 	}
 
-	/* Initialise the next track id with a random track */
+		
+
 	int pl_num_tracks = sp_playlist_num_tracks( g_jukeboxlist ); 
 	g_track_index = rand() % pl_num_tracks; 	
-	
+	*/
+
+	printf( "Log in work done. Finishing. \n" );
+	exit(0);	
 }
 
 /**
@@ -415,8 +446,6 @@ int main(int argc, char **argv)
 	}
 
 
-	audio_init(&g_audiofifo);
-
 	/* Create session */
 	spconfig.application_key_size = g_appkey_size;
 
@@ -433,19 +462,6 @@ int main(int argc, char **argv)
 	pthread_mutex_init(&g_notify_mutex, NULL);
 	pthread_cond_init(&g_notify_cond, NULL);
 	
-	printf("just before sp_playlistcontainer_add_callbacks --~");
-
-
-
-
-
-
-	/*  ORIGINALLY HERE	
-	sp_playlistcontainer_add_callbacks(
-		sp_session_playlistcontainer(g_sess),
-		&pc_callbacks,
-		NULL);
-	*/
 
 	sp_session_login(sp, username, password, 0);
 	pthread_mutex_lock(&g_notify_mutex);
