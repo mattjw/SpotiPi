@@ -74,7 +74,12 @@ def run_detached_cmd(  cmd_str ):
 	abs_command_str = progs_dir_fpath + "/" + cmd_str
 	#print "abs command str:", abs_command_str 
 	po_args = abs_command_str.split(' ')
-	pobj = subprocess.Popen( po_args, stdout=fnull, stderr=fnull )   # Popen requires args to be split uiinto list of srigns
+	
+	#pobj = subprocess.Popen( po_args, stdout=fnull, stderr=fnull )   # Popen requires args to be split uiinto list of srigns
+
+	pobj = subprocess.Popen( po_args )   # Popen requires args to be split uiinto list of srigns
+
+
 
 	child_pid = pobj.pid 
 	
