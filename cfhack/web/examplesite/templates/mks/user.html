@@ -1,30 +1,39 @@
+{% load static %}
+  {% get_static_prefix as STATIC_PATH %}
 <head>
-  <title>MKS</title>
-  <link rel="stylesheet" type="text/css" href="../static/css/user.css" />
+  <title>Motion Kitty Soundtrack</title>
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_PATH }}css/user.css" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script type="text/javascript">
     $(document).ready(function(){
       //send PUT request to intiate relevant actions on server
-      $("#enable").click(function(){
+      $("#enable").click(function() {
           $.ajax({ 
-                url: 'http://127.0.0.1:8000/api/enable', 
-                type: 'PUT',  
-                contentType: 'application/text', 
-                success: function(result) { 
-                    alert(result); 
-                },
-                failure: function() {
-                  alert(failure);
-                }
+            {% if user.enabled %} 
+              url: 'http://127.0.0.1:8000/api/disable', 
+            {% else %} 
+              url: 'http://127.0.0.1:8000/api/enable', 
+            {% endif %}
+            type: 'PUT',  
+            data: {"ID":{{user.id}}},
+            success: function(result) { 
+                alert("success:"); 
+                location.reload();
+            },
+            failure: function() {
+              alert("failure");
+            },
+            error: function(result) {
+              alert("error");
+            }
             }) 
       });
       $("#next").click(function(){
         $.ajax({ 
                 url: 'http://127.0.0.1:8000/api/next', 
                 type: 'PUT',  
-                contentType: 'application/text', 
                 success: function(result) { 
-                    alert(result); 
+                    // alert(result); 
                 },
                 failure: function() {
                   alert(failure);
@@ -34,52 +43,40 @@
     });
     </script>
 </head>
-  <header>
-    <h1>MKS</h1>
-  </header>
-    <table class="user" border=1>
-        <tr>
-          <th>Name</th>
-          <th>Playlist</th>
-          <th>Actions</th>    
-        </tr>
-        {% for user in latest_user_list %} 
-        <tr>
-          <td>
-            <a href="/mks/user_edit/{{ user.id }}/">
-			          {{ user.name }}
-			      </a>
-          </td>
-          <td>
-            {{user.default_pl.name}}
-          </td>
-          <td>
-            <a href="/mks/user_edit/{{ user.id }}/">edit</a>
-		      	<a href="/mks/user_delete/{{ user.id }}/">delete</a>
-          </td>      
-        </tr>
-        {% endfor %}    
-    </table>
-    <img id="enable" src="../static/img/play.jpeg"/>
-    <button id="next">Next</button>
-{% if playlists_list %}
-<table class="playlists" border=1>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-      </tr>
-      {% for p in playlists_list %} 
-      <tr>
-        <td>
-            {{ p.pl_id }}
-          </a>
-        </td>
-        <td>
-            {{ p.name }}
-        </td>    
-      </tr>
-      {% endfor %}    
-  </table>
-{% else %}
-    <p>No playlists imported.</p>
-{% endif %}
+  <body id="centered">
+      <img id="bannerimg" src="{{ STATIC_PATH}}img/motionkittysoundtrack.png"/>
+      {% if user %} 
+        <a href="/mks/user_edit/{{ user.id }}"><h2>Welcome, {{ user.name }}</h2></a>
+      {% else %} 
+        <a href="/mks/user_add/"><h2>sign in</h2> </a>
+      {% endif %}
+      <div id="controls">
+        {% if user.enabled %} 
+          <img id="enable" class="enabled" src="{{ STATIC_PATH }}img/enable.png"/>
+        {% else %}
+          <img id="enable" class="enabled" src="{{ STATIC_PATH }}img/disable.png"/>
+        {% endif %}
+        <img id="next" src="{{ STATIC_PATH }}img/next.png"/>
+      </div>
+        {% if playlists_list %}
+          <table class="playlists" border=1>
+              <tr>
+                <th>ID</th>
+                <th>Name</th> 
+              </tr>
+              {% for p in playlists_list %} 
+              <tr>
+                <td>
+                    {{ p.pl_id }}
+                  </a>
+                </td>
+                <td>
+                    {{ p.name }}
+                </td>    
+              </tr>
+              {% endfor %}    
+          </table>
+        {% else %}
+            <p>No playlists imported.</p>
+      {% endif %}
+</body>

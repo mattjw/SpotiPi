@@ -1,4 +1,5 @@
 from piston.handler import BaseHandler
+from mks.models import User, Playlists
 import subprocess
 
 class SpotHandler(BaseHandler):
@@ -7,24 +8,22 @@ class SpotHandler(BaseHandler):
             return "y"
         else:
             return "n"
-   
-    # def create(self, request):
-    #     if expression == 'enable':
-    #         process = subprocess.call('ls -a')
-    #         return process
-    #     elif expression == 'next':
-    #         return expression
-    #     elif expression == 'disable':
-    #         return "disabled"
 
     def update(self, request, expression):
         if expression == 'enable':
-            # process = subprocess.call('ls -a')
-            # return request.data
-            return expression
+            i = request.PUT.get('ID')
+            user = User.objects.filter(id=1)[0]
+            user.enabled = True
+            user.save()
+            return user.enabled
         elif expression == 'next':
-            return expression
+            return_code = subprocess.Popen("echo hello string", shell=True)
+            return 'next'
         elif expression == 'disable':
-            return expression
+            i = request.PUT.get('ID')
+            user = User.objects.filter(id=1)[0]
+            user.enabled = False
+            user.save()
+            return user.enabled
         else:
             return 'unrecognised call, ignored'

@@ -14,4 +14,4 @@ class PartialUserForm(ModelForm):
     password = forms.CharField( widget=forms.PasswordInput, label="Your Password" )
     class Meta:
         model = User
-        exclude = ('default_pl',)
+        exclude = ('default_pl', 'enabled')
