@@ -1,0 +1,139 @@
+#!/usr/bin/python
+
+import sys
+import os
+import time
+import subprocess
+
+pid_fname = "usb_kitty.pid" #FILOE NAME ONLY -- no path shizz
+
+progs_dir_fpath = os.path.dirname( os.path.realpath( __file__ ) )
+	## programs_fpath:
+	#    absoulte path to the DIRECTORY containing THIS CONTROLLER FILER
+	#    this is used to locate the COMMAND to be run (cmd str)
+	#    and to palce the PID file
+abs_pid_fpath = progs_dir_fpath + "/" + pid_fname
+
+
+args = sys.argv
+
+if len( args ) <= 1:
+	print "No args given"
+	print args
+	exit(1)
+
+
+def run_detached_cmd(  cmd_str ):
+	# programs_fpath:
+	#    absoulte path to the DIRECTORY containing THIS CONTROLLER FILER
+	#    this is used to locate the COMMAND to be run (cmd str)
+	#    and to palce the PID file
+	#
+	# Run given command as detached process. In effect, runs in the background
+	# Info at: "a simple unix linux daemon in python"i
+	# And: "creating a daemon the python way
+	#
+	# Best if the command starts with ./ if referring to exec in current dir
+	try:
+		pid = os.fork()
+		
+		if pid > 0:
+			sys.exit(0)
+		
+	except OSError, ex:
+		print "FORK FAILED"
+		exit(1)
+
+
+	#os.chdir('/')   #this will change working dir for the final process
+	os.setsid()
+	os.umask(0)
+	
+	try:
+		pid = os.fork()
+		if pid > 0:
+			sys.exit(0)
+	except OSError, e:
+		print "FORk 2 FAILED"
+		sys.exit(1)
+	
+	# FLUSH STDOUT SO FAR
+	sys.stdout.flush()
+	sys.stderr.flush()
+
+
+	# REDRCT STDOUT TO HELL
+	#sys.stdout = open( '/dev/null', 'a' )
+	#sys.stderr = open( '/dev/null', 'a' )
+
+	# DO WORK HERE
+
+	fnull = open( os.devnull, 'w' )
+
+	# Run command 
+	abs_command_str = progs_dir_fpath + "/" + cmd_str
+	#print "abs command str:", abs_command_str 
+	po_args = abs_command_str.split(' ')
+	pobj = subprocess.Popen( po_args, stdout=fnull, stderr=fnull )   # Popen requires args to be split uiinto list of srigns
+
+	child_pid = pobj.pid 
+	
+	
+	print "Actual PID. Kill this to end kitty:", child_pid
+	
+	# Store PID
+	print "pid file:", abs_pid_fpath 
+	fout = open( abs_pid_fpath, 'w' )
+	fout.write( str(child_pid) )
+	fout.close()
+	
+
+if args[1] == "start":
+	print "CONT: Starting Kitty"
+	
+#	if len(args) <= 2:
+		# two args means PROGNAME START
+#		print "More args needed if starting"
+#		print args
+#		exit(1);
+	
+#	juke_args = args[2:]
+#	juke_args_str = reduce( lambda x,y: x+' '+y, juke_args )
+	
+	cmd_str = "./usb_kittyd"
+	# cmd_str is JUST the command and its arguemtns
+	# it does NOT inclduude the path to the command
+
+	print "Command: ", cmd_str	
+	
+	# Run command
+	run_detached_cmd( cmd_str)
+
+
+
+elif args[1] == 'stop':
+	# Check for PID file
+	# Read PID file and kill proc
+	# Delete PID file
+	print "CONT: Stopping kitty (if it is running)"
+
+	if os.path.exists( abs_pid_fpath ):
+		if os.path.isfile( abs_pid_fpath ):
+			print "CONT: Killing from file"
+			st = open( abs_pid_fpath, 'r' ).read()
+			st = st.replace( '\n', '' ).replace( ' ', '' ).replace( '\t', '' )
+			pid = int( st )
+			
+			# slay jukebox
+			try:
+				os.kill( pid, 1 )
+			except OSError:
+				print "CONT: Process not found. No kill."
+			os.remove( abs_pid_fpath )			
+		else:
+			# fpath is directory, wtf?
+			print "CONT: Quitting. PID fpath is dir."
+			exit(1)
+	else:
+		print "CONT: No file found. Not stopping."
+

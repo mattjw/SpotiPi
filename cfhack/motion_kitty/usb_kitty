@@ -1,9 +1,36 @@
-import os
+#!/usr/bin/python 
+import os, sys
 
-f = open("./pid",'r')
-pid = int(f.readlines()[0])
-try:
-    os.kill(pid,1)
-except OSError as e:
-    print "Error killing pid %d: %s" %(pid,e)
-os.remove("./pid")
+def exit_status(stat,message):
+        print message
+        exit(stat)
+
+def start():
+        pid = os.spawnl(os.P_NOWAIT,'./usb_kittyd')
+        if os.path.exists("./pid"):
+                os.remove("./pid")
+        f = open("./pid","w")
+        f.write(str(pid))
+        f.close()
+        exit_status(1,"Daemon started: %d" %(pid))
+
+def stop():
+        f = open("./pid",'r')
+        pid = int(f.readlines()[0])
+        try:
+            os.kill(pid,1)
+        except OSError as e:
+            exit_status(0,"Error killing pid %d: %s" %(pid,e))
+        os.remove("./pid")
+        
+
+if len(sys.argv)<2:
+        exit_status(0,"Please enter a command: 'start' or 'stop'")
+command = sys.argv[1]
+if command=="start":
+        start()
+elif command == "stop":
+        stop()
+else:
+        exit_status(0,"Enter valid command: 'start' or 'stop'")
+

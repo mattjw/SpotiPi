@@ -1,5 +1,6 @@
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
+import os
 
 from mks.models import User, Playlists
 from mks.forms import UserForm, PartialUserForm
@@ -11,9 +12,10 @@ def users(request):
         return render_to_response('mks/user.html',
         {'user': user, 'playlists_list': playlists_list})
     except:
+        form = PartialUserForm(request.POST or None)
         # return user_add(request)
         return render_to_response('mks/user.html',
-        {'user': None, 'playlists_list': playlists_list})
+        {'user': None, 'playlists_list': playlists_list, 'user_form': form})
         
 
 def user_add(request):
@@ -23,6 +25,10 @@ def user_add(request):
         cmodel = form.save()
         #This is where you might chooose to do stuff.
         cmodel.save()
+        dr = os.getcwd()
+        os.chdir("home/nyan/SpotiPi/cfhack/spotify_daemon/src/")
+        os.system("/home/nyan/SpotiPi/cfhack/spotify_daemon/src/populate_pldb/populate_pldb -f /home/nyan/SpotiPi/cfhack/web/examplesite/example.db");
+        os.chdir(dr);
         return redirect(users)
 
     return render_to_response('mks/user_add.html',
@@ -39,7 +45,7 @@ def user_edit(request, user_id):
         user.save()
         return redirect(users)
 
-    return render_to_response('mks/user_edit_bs.html',
+    return render_to_response('mks/user_edit.html',
                               {'user_form': form,
                                'user_id': user_id},
                               context_instance=RequestContext(request))

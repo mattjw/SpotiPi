@@ -17,14 +17,13 @@ min_movement=1     # 2 Threshold for samples different to last second
 #####################################################
 def move_switch():
     print "MOVEMENT!"
-    os.system("/home/nyan/SpotiPi/cfhack/spotify_daemon/checker.py motion")
 
 #####################################################
 ##          No movement response                   ##
 #####################################################
 def no_move_switch():
     print "No movement anymore :-("
-    os.system("/home/nyan/SpotiPi/cfhack/spotify_daemon/checker.py nomotion")
+
 
 #####################################################
 ##          Find and Grab USB Device               ##
@@ -55,7 +54,7 @@ elapsed_time = 0    # Elapsed time for current sample (reset each sample)
 
 threshold = min_movement
 false_threshold = (sample/interval)-min_movement
-#print false_threshold
+print false_threshold
 
 while 1:
     try:

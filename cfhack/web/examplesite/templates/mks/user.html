@@ -1,13 +1,23 @@
 {% load static %}
-  {% get_static_prefix as STATIC_PATH %}
+{% get_static_prefix as STATIC_PATH %}
 <head>
   <title>Motion Kitty Soundtrack</title>
   <link rel="stylesheet" type="text/css" href="{{ STATIC_PATH }}css/user.css" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script src="{{ STATIC_PATH }}js/jquery.columnhover.js"></script>
   <script type="text/javascript">
+
     $(document).ready(function(){
-      //send PUT request to intiate relevant actions on server
+       $('#pl_table').columnHover(); 
+       // $("#account").hover(function() {
+       //  $('#account').replaceWith('<a href="/mks/user_edit/{{ user.id }}" id="account"><h2>Your Account</h2></a>');
+       // }, function() {
+       //  $('#account').replaceWith('<a href="/mks/user_edit/{{ user.id }}" id="account"><h2>Welcome, {{ user.name }}</h2></a>');
+       //  });
+      //Checks if user exists and
+      //sends PUT request to intiate relevant actions on server
       $("#enable").click(function() {
+        {% if user %}
           $.ajax({ 
             {% if user.enabled %} 
               url: 'http://127.0.0.1:8000/api/disable', 
@@ -17,7 +27,6 @@
             type: 'PUT',  
             data: {"ID":{{user.id}}},
             success: function(result) { 
-                alert("success:"); 
                 location.reload();
             },
             failure: function() {
@@ -26,57 +35,102 @@
             error: function(result) {
               alert("error");
             }
-            }) 
+            })
+        {% else %}
+          $("#id_name").focus();
+        {% endif %} 
       });
       $("#next").click(function(){
-        $.ajax({ 
-                url: 'http://127.0.0.1:8000/api/next', 
-                type: 'PUT',  
-                success: function(result) { 
-                    // alert(result); 
-                },
-                failure: function() {
-                  alert(failure);
-                }
-            }) 
+        {% if user %}
+          $.ajax({ 
+                  url: 'http://127.0.0.1:8000/api/next', 
+                  type: 'PUT',  
+                  success: function(result) { 
+                      // alert(result); 
+                  },
+                  failure: function() {
+                    alert(failure);
+                  }
+          }) 
+        {% else %}
+          $("#id_name").focus();
+        {% endif %} 
+      });
+      //clicks on tablew rows interpreted here and sent to update default_pl
+      $('tr').click(function() {
+        {% if user %}
+        //easiest way to get pl_id from the table without showing it to the user
+          var row = $(this).attr("class");
+          $.ajax({ 
+                  url: 'http://127.0.0.1:8000/api/set_playlist', 
+                  type: 'PUT',  
+                  data: {
+                      "ID": {{ user.id }},
+                      "PL_ID": row
+                  },
+                  success: function(result) { 
+                      //if someone can show me how to reload a table and just a table, let me know!
+                      // $("#pl_table").innerHTML=xmlHttp.responseText;
+                      location.reload();
+                  },
+                  failure: function() {
+                    alert(failure);
+                  },
+                  error: function(result) {
+                    alert(result.error);
+                  }
+          })
+        {% endif %} 
       });
     });
     </script>
 </head>
   <body id="centered">
-      <img id="bannerimg" src="{{ STATIC_PATH}}img/motionkittysoundtrack.png"/>
+      <a href="/mks/"><img id="bannerimg" src="{{ STATIC_PATH }}img/bgrounded.png"/></a>
       {% if user %} 
-        <a href="/mks/user_edit/{{ user.id }}"><h2>Welcome, {{ user.name }}</h2></a>
+        <a href="/mks/user_edit/{{ user.id }}" id="account"><h2>Welcome, {{ user.name }}</h2></a>
       {% else %} 
-        <a href="/mks/user_add/"><h2>sign in</h2> </a>
+          <form class="form" action="/mks/user_add/" method="post" id="login">
+          {% csrf_token %}
+          <table>
+          {{ user_form.as_table }}
+          </table>
+          <input type="submit" value="Save" />
+        </div>
       {% endif %}
       <div id="controls">
         {% if user.enabled %} 
-          <img id="enable" class="enabled" src="{{ STATIC_PATH }}img/enable.png"/>
-        {% else %}
           <img id="enable" class="enabled" src="{{ STATIC_PATH }}img/disable.png"/>
+        {% else %}
+          <img id="enable" class="disabled" src="{{ STATIC_PATH }}img/enable.png"/>
         {% endif %}
         <img id="next" src="{{ STATIC_PATH }}img/next.png"/>
       </div>
         {% if playlists_list %}
-          <table class="playlists" border=1>
-              <tr>
-                <th>ID</th>
-                <th>Name</th> 
-              </tr>
+        <div class="playlists">
+          <table border=0 id="pl_table">
               {% for p in playlists_list %} 
-              <tr>
-                <td>
-                    {{ p.pl_id }}
-                  </a>
+              {% if p.pl_id == user.default_pl %}
+              <!-- pl_id is stored in class table to send to API -->
+                <tr class = {{ p.pl_id }} id="default">
+              {% else %}
+                <tr class = {{ p.pl_id }}>
+              {% endif %}
+                <td id="playlist">
+                    {{ p.name }}
                 </td>
                 <td>
-                    {{ p.name }}
+                    {{ p.no_of_songs }}
                 </td>    
               </tr>
               {% endfor %}    
           </table>
+        </div>
         {% else %}
             <p>No playlists imported.</p>
       {% endif %}
 </body>
+<footer id="footer">
+  Created for the Open Sauce Hackathon 2012 by <a href="https://twitter.com/intent/user?screen_name=voxmjw">@voxmjw</a>, <a href="https://twitter.com/intent/user?screen_name=whitehankey">@whitehankey</a> and <a href="https://twitter.com/intent/user?screen_name=encima27">@encima27</a>
+</footer>
+
