@@ -73,6 +73,8 @@ static int g_track_index = -1;
 /// Index to current playlist (PL id) -MJW
 static int g_playlist_id = -1;
 
+/// File path to a sqlite3 db
+static char* g_dbfpath = NULL;
 
 
 /* --------------------------  PLAYLIST CALLBACKS  ------------------------- */
@@ -403,7 +405,7 @@ static void usage(const char *progname)
 	printf("PRT 111t\n");
 
 
-	fprintf(stderr, "usage: %s -u <username> -p <password> -l <listname> [-d]\n", progname);
+	fprintf(stderr, "usage: %s -u <username> -p <password> -f <pathtodb>\n", progname);
 }
 
 int main(int argc, char **argv)
@@ -419,7 +421,7 @@ int main(int argc, char **argv)
 	int opt;
 
 
-	while ((opt = getopt(argc, argv, "u:p:l:")) != EOF) {
+	while ((opt = getopt(argc, argv, "u:p:f:")) != EOF) {
 		switch (opt) {
 		case 'u':
 			username = optarg;
@@ -429,10 +431,9 @@ int main(int argc, char **argv)
 			password = optarg;
 			break;
 
-		case 'l':
+		case 'f':
 			//g_listname = optarg;
-			g_playlist_id = atoi( optarg );
-			printf( "parse success" ); 
+			g_dbfpath = optarg;
 			break;
 
 		default:
@@ -440,11 +441,12 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (!username || !password || (g_playlist_id==-1)) {
+	if (!username || !password || !g_dbfpath) {
 		usage(basename(argv[0]));
 		exit(1);
 	}
 
+	printf( "db fpath: %s", g_dbfpath );
 
 	/* Create session */
 	spconfig.application_key_size = g_appkey_size;
