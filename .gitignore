@@ -2,7 +2,8 @@
 #....
 appkey.c
 cfhack/spotify_daemon/src/tmp/
-
+cfhack/spotify_daemon/src/populate_pldb/tmp/
+cfhack/spotify_daemon/src/spshell/tmp/
 
 #### Packages ####
 
