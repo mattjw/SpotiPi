@@ -26,7 +26,7 @@ def user_add(request):
         #This is where you might chooose to do stuff.
         cmodel.save()
         dr = os.getcwd()
-        os.chdir("home/nyan/SpotiPi/cfhack/spotify_daemon/src/")
+        os.chdir("/home/nyan/SpotiPi/cfhack/spotify_daemon/src/")
         os.system("/home/nyan/SpotiPi/cfhack/spotify_daemon/src/populate_pldb/populate_pldb -f /home/nyan/SpotiPi/cfhack/web/examplesite/example.db");
         os.chdir(dr);
         return redirect(users)

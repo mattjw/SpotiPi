@@ -18,6 +18,7 @@ min_movement=1     # 2 Threshold for samples different to last second
 def move_switch():
     print "MOVEMENT!"
     os.system("/home/nyan/SpotiPi/cfhack/spotify_daemon/checker.py motion")
+   
 
 #####################################################
 ##          No movement response                   ##

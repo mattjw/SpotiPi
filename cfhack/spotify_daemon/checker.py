@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import sqlite3
 import sys
 import os
@@ -24,17 +26,29 @@ if mode == 'motion':
 	print ">>> GRabbing data to make decision"
 
 	qry = "SELECT name, password, enabled, default_pl from users";
-	con = sqlite.connect("/home/nyan/SpotiPi/cfhack/web/examplesite/example.db")
+	con = sqlite3.connect("/home/nyan/SpotiPi/cfhack/web/examplesite/example.db")
 	cur = con.cursor()
 	result = cur.execute(qry)
+	data = cur.fetchone()	
+	
 	
 	do_playback = True
 	username = "voxyn"
 	password = "bastard11"
 	playlist_id = 3
 
+#	(username, password, do_playback, playlist_id) = data
+#
+#	username = str(username)
+#	password = str( password )
+
+#	print username, password, do_playback, playlist_id	
+
+#	print data
+#	exit()
+
 	# call jukebox functionm
-	if do_playback:
+	if do_playback == 1 and playlist_id != -1:
 		print ">>> doing playback"
 	
 		#os.chdir()i
