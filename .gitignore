@@ -1,7 +1,7 @@
 #### PROJECT-SPECIFIC ####
 #....
 appkey.c
-cfhack/spotify_daemon/examples/tmp/
+cfhack/spotify_daemon/src/tmp/
 
 
 #### Packages ####

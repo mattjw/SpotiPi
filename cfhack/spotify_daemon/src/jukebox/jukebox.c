@@ -65,13 +65,13 @@ static sp_session *g_sess;
 static sp_playlist *g_jukeboxlist;
 /// Name of the playlist currently being played
 const char *g_listname;
-/// Remove tracks flag
-static int g_remove_tracks = 0;
 /// Handle to the curren track
 static sp_track *g_currenttrack;
 /// Index to the next track
-static int g_track_index;
+static int g_track_index = -1;
 
+/// Index to current playlist (PL id) -MJW
+static int g_playlist_id = -1;
 
 /**
  * Called on various events to start playback if it hasn't been started already.
@@ -80,6 +80,9 @@ static int g_track_index;
  */
 static void try_jukebox_start(void)
 {
+	printf( "\n\ntrack idnex %d\n\n", g_track_index );
+	printf("[PRT 111a -- TRY JUKE START]  ");
+
 	sp_track *t;
 
 	if (!g_jukeboxlist)
@@ -87,11 +90,6 @@ static void try_jukebox_start(void)
 
 	if (!sp_playlist_num_tracks(g_jukeboxlist)) {
 		fprintf(stderr, "jukebox: No tracks in playlist. Waiting\n");
-		return;
-	}
-
-	if (sp_playlist_num_tracks(g_jukeboxlist) < g_track_index) {
-		fprintf(stderr, "jukebox: No more tracks in playlist. Waiting\n");
 		return;
 	}
 
@@ -135,6 +133,11 @@ static void try_jukebox_start(void)
 static void tracks_added(sp_playlist *pl, sp_track * const *tracks,
                          int num_tracks, int position, void *userdata)
 {
+	
+	printf("PRT 111b\n");
+
+
+
 	if (pl != g_jukeboxlist)
 		return;
 
@@ -154,6 +157,10 @@ static void tracks_added(sp_playlist *pl, sp_track * const *tracks,
 static void tracks_removed(sp_playlist *pl, const int *tracks,
                            int num_tracks, void *userdata)
 {
+	
+	printf("PRT 111c\n");
+
+
 	int i, k = 0;
 
 	if (pl != g_jukeboxlist)
@@ -182,6 +189,10 @@ static void tracks_removed(sp_playlist *pl, const int *tracks,
 static void tracks_moved(sp_playlist *pl, const int *tracks,
                          int num_tracks, int new_position, void *userdata)
 {
+	
+	printf("PRT 111d\n");
+
+
 	if (pl != g_jukeboxlist)
 		return;
 
@@ -198,6 +209,10 @@ static void tracks_moved(sp_playlist *pl, const int *tracks,
  */
 static void playlist_renamed(sp_playlist *pl, void *userdata)
 {
+	
+	printf("PRT 111e\n");
+
+
 	const char *name = sp_playlist_name(pl);
 
 	if (!strcasecmp(name, g_listname)) {
@@ -236,7 +251,10 @@ static sp_playlist_callbacks pl_callbacks = {
  */
 static void playlist_added(sp_playlistcontainer *pc, sp_playlist *pl,
                            int position, void *userdata)
-{
+{	
+	printf("PRT 111f\n");
+
+
 	sp_playlist_add_callbacks(pl, &pl_callbacks, NULL);
 
 	if (!strcasecmp(sp_playlist_name(pl), g_listname)) {
@@ -257,7 +275,10 @@ static void playlist_added(sp_playlistcontainer *pc, sp_playlist *pl,
  */
 static void playlist_removed(sp_playlistcontainer *pc, sp_playlist *pl,
                              int position, void *userdata)
-{
+{	
+	printf("PRT 111g\n");
+
+
 	sp_playlist_remove_callbacks(pl, &pl_callbacks, NULL);
 }
 
@@ -270,7 +291,10 @@ static void playlist_removed(sp_playlistcontainer *pc, sp_playlist *pl,
  * @param  userdata      The opaque pointer
  */
 static void container_loaded(sp_playlistcontainer *pc, void *userdata)
-{
+{	
+	printf("PRT 111h\n");
+
+
 	fprintf(stderr, "jukebox: Rootlist synchronized (%d playlists)\n",
 	    sp_playlistcontainer_num_playlists(pc));
 }
@@ -293,7 +317,10 @@ static sp_playlistcontainer_callbacks pc_callbacks = {
  * @sa sp_session_callbacks#logged_in
  */
 static void logged_in(sp_session *sess, sp_error error)
-{
+{	
+	printf("PRT 111i\n");
+
+
 	sp_playlistcontainer *pc = sp_session_playlistcontainer(sess);
 	int i;
 
@@ -303,23 +330,36 @@ static void logged_in(sp_session *sess, sp_error error)
 		exit(2);
 	}
 
-	printf("jukebox: Looking at %d playlists\n", sp_playlistcontainer_num_playlists(pc));
+	/* SEARCHING for playlist id from name */
 
-	for (i = 0; i < sp_playlistcontainer_num_playlists(pc); ++i) {
-		sp_playlist *pl = sp_playlistcontainer_playlist(pc, i);
+	int num_pls = sp_playlistcontainer_num_playlists(pc);
+	printf("jukebox: Looking at %d playlists\n", num_pls );
+
+	if( (g_playlist_id < 0) || (g_playlist_id >= num_pls) )
+	{
+		printf( "Playlist id %d is out of range of available playlists\n", g_playlist_id );
+		printf( "\tWILL NOT DO ANYTHING\n" );
+	} 
+	else
+	{
+		sp_playlist *pl = sp_playlistcontainer_playlist(pc, g_playlist_id);
 
 		sp_playlist_add_callbacks(pl, &pl_callbacks, NULL);
-
-		if (!strcasecmp(sp_playlist_name(pl), g_listname)) {
-			g_jukeboxlist = pl;
-			try_jukebox_start();
-		}
+		g_listname = sp_playlist_name(pl); 
+		g_jukeboxlist = pl;
+		try_jukebox_start();
 	}
+
 
 	if (!g_jukeboxlist) {
 		printf("jukebox: No such playlist. Waiting for one to pop up...\n");
 		fflush(stdout);
 	}
+
+	/* Initialise the next track id with a random track */
+	int pl_num_tracks = sp_playlist_num_tracks( g_jukeboxlist ); 
+	g_track_index = rand() % pl_num_tracks; 	
+	
 }
 
 /**
@@ -331,7 +371,10 @@ static void logged_in(sp_session *sess, sp_error error)
  * @sa sp_session_callbacks#notify_main_thread
  */
 static void notify_main_thread(sp_session *sess)
-{
+{	
+	printf("[PRT 111j -- NOTIFY MAIN THREAD]  ");
+
+
 	pthread_mutex_lock(&g_notify_mutex);
 	g_notify_do = 1;
 	pthread_cond_signal(&g_notify_cond);
@@ -345,7 +388,10 @@ static void notify_main_thread(sp_session *sess)
  */
 static int music_delivery(sp_session *sess, const sp_audioformat *format,
                           const void *frames, int num_frames)
-{
+{	
+	//printf("[PRT 111 -- music delivery ]\n");
+
+
 	audio_fifo_t *af = &g_audiofifo;
 	audio_fifo_data_t *afd;
 	size_t s;
@@ -388,7 +434,10 @@ static int music_delivery(sp_session *sess, const sp_audioformat *format,
  * @sa sp_session_callbacks#end_of_track
  */
 static void end_of_track(sp_session *sess)
-{
+{	
+	printf("PRT 111p\n");
+
+
 	pthread_mutex_lock(&g_notify_mutex);
 	g_playback_done = 1;
 	pthread_cond_signal(&g_notify_cond);
@@ -405,7 +454,10 @@ static void end_of_track(sp_session *sess)
  * @sa sp_session_callbacks#metadata_updated
  */
 static void metadata_updated(sp_session *sess)
-{
+{	
+	printf("PRT 111q\n");
+
+
 	try_jukebox_start();
 }
 
@@ -416,7 +468,10 @@ static void metadata_updated(sp_session *sess)
  * @sa sp_session_callbacks#play_token_lost
  */
 static void play_token_lost(sp_session *sess)
-{
+{	
+	printf("PRT 111r\n");
+
+
 	audio_fifo_flush(&g_audiofifo);
 
 	if (g_currenttrack != NULL) {
@@ -461,18 +516,23 @@ static sp_session_config spconfig = {
  * Called from the main loop when the music_delivery() callback has set g_playback_done.
  */
 static void track_ended(void)
-{
+{	
+	printf("PRT 111s\n");
+
+
 	int tracks = 0;
 
 	if (g_currenttrack) {
 		g_currenttrack = NULL;
 		sp_session_player_unload(g_sess);
-		if (g_remove_tracks) {
-			sp_playlist_remove_tracks(g_jukeboxlist, &tracks, 1);
-		} else {
-			++g_track_index;
-			try_jukebox_start();
-		}
+		
+		/* choose new track index at random */ 
+		int pl_num_tracks = sp_playlist_num_tracks( g_jukeboxlist ); 
+		g_track_index = rand() % pl_num_tracks; 
+		// Note: g_track_index -- defined to be the index of the NEXT track	
+		// ++g_track_index; // increment track (if sequential play)
+		
+		try_jukebox_start();
 	}
 }
 
@@ -482,13 +542,19 @@ static void track_ended(void)
  * @param  progname  The program name
  */
 static void usage(const char *progname)
-{
+{	
+	printf("PRT 111t\n");
+
+
 	fprintf(stderr, "usage: %s -u <username> -p <password> -l <listname> [-d]\n", progname);
 	fprintf(stderr, "warning: -d will delete the tracks played from the list!\n");
 }
 
 int main(int argc, char **argv)
 {
+	printf( "STARTING UP~" );
+	
+	
 	sp_session *sp;
 	sp_error err;
 	int next_timeout = 0;
@@ -496,7 +562,8 @@ int main(int argc, char **argv)
 	const char *password = NULL;
 	int opt;
 
-	while ((opt = getopt(argc, argv, "u:p:l:d")) != EOF) {
+
+	while ((opt = getopt(argc, argv, "u:p:l:")) != EOF) {
 		switch (opt) {
 		case 'u':
 			username = optarg;
@@ -507,11 +574,9 @@ int main(int argc, char **argv)
 			break;
 
 		case 'l':
-			g_listname = optarg;
-			break;
-
-		case 'd':
-			g_remove_tracks = 1;
+			//g_listname = optarg;
+			g_playlist_id = atoi( optarg );
+			printf( "parse success" ); 
 			break;
 
 		default:
@@ -519,10 +584,11 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (!username || !password || !g_listname) {
+	if (!username || !password || (g_playlist_id==-1)) {
 		usage(basename(argv[0]));
 		exit(1);
 	}
+
 
 	audio_init(&g_audiofifo);
 
@@ -541,14 +607,32 @@ int main(int argc, char **argv)
 
 	pthread_mutex_init(&g_notify_mutex, NULL);
 	pthread_cond_init(&g_notify_cond, NULL);
+	
+	printf("just before sp_playlistcontainer_add_callbacks --~");
 
+
+
+
+
+
+	/*  ORIGINALLY HERE	
 	sp_playlistcontainer_add_callbacks(
 		sp_session_playlistcontainer(g_sess),
 		&pc_callbacks,
 		NULL);
+	*/
 
 	sp_session_login(sp, username, password, 0);
 	pthread_mutex_lock(&g_notify_mutex);
+
+	/* IF EXIT HERE, ALL WORKS ~ */
+	/* if sp_playlistcontainer_add_callbacks is used, then we have a problem */
+
+	/* printf("\n\nEND\n\n"); exit(0); */
+
+
+
+
 
 	for (;;) {
 		if (next_timeout == 0) {
@@ -584,6 +668,13 @@ int main(int argc, char **argv)
 
 		pthread_mutex_lock(&g_notify_mutex);
 	}
+
+	/* MOVED! was originaly plcaed very early in main method. caused issues
+	sp_playlistcontainer_add_callbacks(
+		sp_session_playlistcontainer(g_sess),
+		&pc_callbacks,
+		NULL);
+	*/
 
 	return 0;
 }
