@@ -6,6 +6,7 @@ cfhack/spotify_daemon/src/populate_pldb/tmp/
 cfhack/spotify_daemon/src/spshell/tmp/
 *.db
 *.sqlite
+*.pid 
 
 #### Packages ####
 
