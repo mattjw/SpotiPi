@@ -1,21 +1,21 @@
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 
-from mks.models import User
+from mks.models import User, Playlists
 from mks.forms import UserForm
 
 def users(request):
     latest_user_list = User.objects.all().order_by('name')
-    print len(latest_user_list)
+    playlists_list = Playlists.objects.all().order_by('pl_id')
     if len(latest_user_list) < 1:
-        return redirect(user_add)
+        return user_add(request)
     else:
         return render_to_response('mks/user.html',
-		{'latest_user_list': latest_user_list,})
+		{'latest_user_list': latest_user_list, 'playlists_list': playlists_list})
 
 def user_add(request):
     # sticks in a POST or renders empty form
-    form = UserForm(request.POST or None)
+    form = PartialUserForm(request.POST or None)
     if form.is_valid():
         cmodel = form.save()
         #This is where you might chooose to do stuff.
@@ -43,5 +43,6 @@ def user_edit(request, user_id):
                               
 def user_delete(request, user_id):
     c = User.objects.get(pk=user_id).delete()
+    Playlists.objects.all().delete()
 
     return redirect(users)                          

@@ -1,0 +1,17 @@
+body{
+	background-color: grey;
+	color: white;
+	font-family: Verdana, "Trebuchet MS", "Lucida Grande", Helvetica, sans-serif;
+	font-size: 90%;
+	margin-top: 5px;
+}
+
+header{
+	background-color: pink;
+}
+
+table{
+	margin-left:auto; 
+    margin-right:auto;
+	
+}

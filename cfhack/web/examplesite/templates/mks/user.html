@@ -1,18 +1,26 @@
 <head>
   <title>MKS</title>
+  <link rel="stylesheet" type="text/css" href="../static/css/user.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script type="text/javascript">
-    function enablePB() {
-      alert("LOL");
-    }
-  </script>
+    $(document).ready(function(){
+      $("#enable").click(function(){
+        alert("Next");
+      });
+      $("#next").click(function(){
+        alert("Next");
+      });
+    });
+    </script>
 </head>
-<h1>Get your spot on</h1>
-
-{% if latest_user_list %}
-    <table border=1>
+  <header>
+    <h1>MKS</h1>
+  </header>
+    <table class="user" border=1>
         <tr>
           <th>Name</th>
-          <th>&nbsp;</th>    
+          <th>Playlist</th>
+          <th>Actions</th>    
         </tr>
         {% for user in latest_user_list %} 
         <tr>
@@ -22,16 +30,35 @@
 			      </a>
           </td>
           <td>
+            {{user.default_pl.name}}
+          </td>
+          <td>
             <a href="/mks/user_edit/{{ user.id }}/">edit</a>
 		      	<a href="/mks/user_delete/{{ user.id }}/">delete</a>
           </td>      
         </tr>
         {% endfor %}    
     </table>
-    <button onMouseDown="return enablePB()">Enable?</button>
-    <button>Next</button>
-
+    <img id="enable" src="../static/img/play.jpeg"/>
+    <button id="next">Next</button>
+{% if playlists_list %}
+<table class="playlists" border=1>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+      </tr>
+      {% for p in playlists_list %} 
+      <tr>
+        <td>
+            {{ p.pl_id }}
+          </a>
+        </td>
+        <td>
+            {{ p.name }}
+        </td>    
+      </tr>
+      {% endfor %}    
+  </table>
 {% else %}
-    <a href="/mks/user_add/">+ Add User</a>
-    <p>No users created.</p>
+    <p>No playlists imported.</p>
 {% endif %}
