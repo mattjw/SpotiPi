@@ -65,18 +65,32 @@ int setupDB(char* dbname){
         printf("Database Opened/Created");
         const char *create_playlist_table = "CREATE TABLE IF NOT EXISTS spotify_playlists('pl_id' INTEGER PRIMARY KEY, 'name' VARCHAR(100), 'no_of_songs' INTEGER)";
         if (sqlite3_exec(db, create_playlist_table, NULL, NULL, &errMsg) == SQLITE_OK) {
-            printf("Table Detected/Created");
-            sqlite3_close(db);
-            return 1;
+            printf("Table Detected/Created\n");
         } else {
-            printf("Error creating SQLite Table");
+            printf("Error creating SQLite Table\n");
             printf("%s", sqlite3_errmsg(&db));
-            return 0;}
-        
+            exit(1);
+	 }
+
+
+ 	char* qry = "DELETE FROM spotify_playlists";
+
+	if (sqlite3_exec(db, qry, NULL, NULL, &errMsg) == SQLITE_OK) {
+		printf("delete all rows\n");
+	}
+	else
+	{
+		printf("error deleting all rows\n");
+		printf("%s\n", sqlite3_errmsg(&db));
+		exit(1);
+	}      
+	
+	sqlite3_close( db );
+
     }else{
-        printf("Issues Opening DB, DB Not Opened/Created");
-        printf("%s", sqlite3_errmsg(db));
-        return 0;
+        printf("Issues Opening DB, DB Not Opened/Created\n");
+        printf("%s\n", sqlite3_errmsg(db));
+        exit(1);
     }
 }
 
@@ -297,7 +311,6 @@ static void logged_in(sp_session *sess, sp_error error)
 	int num_pls = sp_playlistcontainer_num_playlists(pc);
 	printf("jukebox: Looking at %d playlists\n", num_pls );
 
-	printf( "This is how it begins" );
 
 	/*
 	char *pl_names[num_pls]; 
@@ -305,22 +318,66 @@ static void logged_in(sp_session *sess, sp_error error)
 	// Not using char array of strings. Risk of seg faults. Need more time to handle.
 	*/
 
-	char *pl_name;
+	setupDB( g_dbfpath );
+	//	creates DB file if there is not one
+	//	creates table if there is not one
+	//	deletes all rows from table
 
-	int id;
-	for( id=0; id < num_pls; id++ )
-	{
-		sp_playlist *pl = sp_playlistcontainer_playlist( pc, id );
+	char* errMsg;
+	sqlite3* db = NULL;
+	if(sqlite3_open(g_dbfpath, &db) == SQLITE_OK) {
 		
-		sp_playlist_add_callbacks(pl, &pl_callbacks, NULL);
-		pl_name = sp_playlist_name(pl); 
-
-		if( strlen(pl_name) > 0 )
-		{
-			printf( "%d :: %s \n", id, pl_name );
+		char* qry = "BEGIN TRANSACTION";
+		if (sqlite3_exec(db, qry, NULL, NULL, &errMsg) == SQLITE_OK) {
+			printf("begin transaction");
 		}
-	}
+		else
+		{
+			printf("Error setting transaction");
+			printf("%s", sqlite3_errmsg(&db));
+			exit(1);
+		}
 
+		char *pl_name;
+		int id;
+		for( id=0; id < num_pls; id++ )
+		{
+			sp_playlist *pl = sp_playlistcontainer_playlist( pc, id );
+					
+			sp_playlist_add_callbacks(pl, &pl_callbacks, NULL);
+			pl_name = sp_playlist_name(pl); 
+			int num_tracks = sp_playlist_num_tracks( pl );
+			
+			if( strlen(pl_name) > 0 )
+			{
+				printf( "%d :: %s \n", id, pl_name );
+				struct playlist test;
+				test.name=pl_name;
+				test.pl_id=id;
+				test.no_of_songs=num_tracks;
+				addPlaylist(db, test);
+			}
+		}
+
+		qry = "COMMIT TRANSACTION";
+		if (sqlite3_exec(db, qry, NULL, NULL, &errMsg) == SQLITE_OK) {
+			printf("commit transaction");
+		}
+		else
+		{
+			printf("Error setting transaction");
+			printf("%s", sqlite3_errmsg(&db));
+			exit(1);
+		}
+
+		sqlite3_close(db);
+		printf( "DB write complete." );
+	}
+	else
+	{
+		printf("Issues Opening DB, DB Not Opened/Created");
+		printf("%s", sqlite3_errmsg(db));
+	}
 
 	/* //uncomment this code if segfaults again	
 	
