@@ -1,0 +1,138 @@
+#!/usr/bin/python
+
+import sys
+import os
+import time
+
+pid_file = "./jukebox.pid"
+
+args = sys.argv
+
+if len( args ) <= 1:
+	print "No args given"
+	print args
+	exit(1)
+
+
+def run():
+	"""
+	pid1 = os.fork()
+	if( pid1 == 0 ):
+		os.setsid() 
+		pid2 = os.fork()
+		if pid2 == 0:
+			thispid = os.getpid()
+			while True:
+				print thispid
+
+	"""
+
+	try:
+		pid = os.fork()
+		print "First fork", pid 
+		
+		if pid > 0:
+			sys.exit(0)
+		
+	except OSError, ex:
+		print "FORK FAILED"
+		exit(1)
+
+
+	print "NEW PIDDDD", pid 
+	os.chdir('/')
+	os.setsid()
+	os.umask(0)
+	
+	try:
+		pid = os.fork()
+		print "Fork 2", pid 
+		if pid > 0:
+			sys.exit(0)
+	except OSError, e:
+		print "FORk 2 FAILED"
+		sys.exit(1)
+	
+	sys.stdout.flush()
+	sys.stderr.flush()
+	
+	actual_pid = os.getpid()
+	print "running"
+	print "running"
+	print actual_pid
+	sys.stdout = open( '/dev/null' )
+	sys.stderr = open( '/dev/null' )
+	
+	time.sleep( 100)
+	
+	while True:
+		print "running", actual_pid
+		
+
+if args[1] == "start":
+	print "CONT: Starting Jukebox"
+	
+	if len(args) <= 2:
+		# two args means PROGNAME START
+		print "More args needed if starting"
+		print args
+		exit(1);
+	
+	juke_args = args[2:]
+	juke_args_str = reduce( lambda x,y: x+' '+y, juke_args )
+	
+	call_str = "./jukebox " + juke_args_str
+
+	print "Command: ", call_str	
+	
+	# Run command
+	os.system( 'echo "ok" > ~/init.tixt  ;  sleep 3;  echo wtf > ~/test.txt' ) 
+	run()
+	exit()
+	pid = os.spawnl( os.P_NOWAIT, './jukebox', *juke_args )
+	pid = os.spawnl( os.P_NOWAIT, 'echo "ok" > ~/init.txt  ;  sleep 3;  echo wtf > ~/test.txt' )
+	pid = os.spawnl( os.P_NOWAIT, 'sleep 20 &' )
+	pid = os.spawnl( os.P_DETACH, 'bash' )
+	
+
+	print "PID", pid
+
+	# Store PID	
+	fout = open( pid_file, 'w' )
+	fout.write( str(pid) )
+	fout.close()
+
+elif args[1] == 'stop':
+	# Check for PID file
+	# Read PID file and kill proc
+	# Delete PID file
+	print "CONT: Stopping Jukebox (if it is running)"
+	
+	if os.path.exists( pid_file ):
+		if os.path.isfile( pid_file ):
+			print "CONT: Killing from file"
+			st = open( pid_file, 'r' ).read()
+			st = st.replace( '\n', '' ).replace( ' ', '' ).replace( '\t', '' )
+			pid = int( st )
+			
+			# slay jukebox
+			try:
+				os.kill( pid, 1 )
+			except OSError:
+				print "CONT: Process not found. No kill."
+			os.remove( pid_file )			
+		else:
+			# fpath is directory, wtf?
+			print "CONT: Quitting. PID fpath is dir."
+			exit(1)
+	else:
+		print "CONT: No file found. Not stopping."
+		
+	
+
+
+	
+	
+
+
+

@@ -1,6 +1,6 @@
 #EXAMPLES=jukebox spshell
-EXAMPLES=populate_pldb 
-
+#EXAMPLES=populate_pldb 
+EXAMPLES=jukebox 
 
 .PHONY: all clean
 
