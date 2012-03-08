@@ -1,5 +1,40 @@
-#### THIS PROJECT ####
+#### PROJECT-SPECIFIC ####
 #....
+
+
+
+#### Packages ####
+
+# Archives #
+*.7z
+*.jar
+*.rar
+*.zip
+*.gz
+*.bzip
+*.xz
+*.lzma
+
+# Packing #
+*.iso
+*.tar
+
+# Package Management #
+*.dmg
+*.xpi
+*.gem
+*.egg
+*.deb
+*.rpm
+
+
+#### Java ####
+
+*.class
+
+*.jar
+*.war
+*.ear
 
 
 #### C++ ####
@@ -18,7 +53,7 @@
 *.a
 
 
-#### XCODE ####
+#### XCode ####
 
 # xcode noise
 *.mode1v3
@@ -30,13 +65,45 @@
 build/*
 
 
+#### XCode/Objective-C ####
+
+*.pbxuser
+!default.pbxuser
+*.modelv3
+!default.modelv3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+*.xcworkspace
+!default.xcworkspace
+xcuserdata
+profile
+*.moved-aside
+
+
 #### OS X ####
 
 *.DS_Store
 .DS_Store
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+._*
+.Spotlight-V100
+.Trashes
 
 
-#### PYTHON ####
+#### Python-Django ####
+
+*.log
+*.pot
+*.pyc
+#settings.py
+
+
+#### Python ####
 
 *.py[co]
 
