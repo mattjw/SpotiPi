@@ -4,11 +4,32 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script type="text/javascript">
     $(document).ready(function(){
+      //send PUT request to intiate relevant actions on server
       $("#enable").click(function(){
-        alert("Next");
+          $.ajax({ 
+                url: 'http://127.0.0.1:8000/api/enable', 
+                type: 'PUT',  
+                contentType: 'application/text', 
+                success: function(result) { 
+                    alert(result); 
+                },
+                failure: function() {
+                  alert(failure);
+                }
+            }) 
       });
       $("#next").click(function(){
-        alert("Next");
+        $.ajax({ 
+                url: 'http://127.0.0.1:8000/api/next', 
+                type: 'PUT',  
+                contentType: 'application/text', 
+                success: function(result) { 
+                    alert(result); 
+                },
+                failure: function() {
+                  alert(failure);
+                }
+            }) 
       });
     });
     </script>
