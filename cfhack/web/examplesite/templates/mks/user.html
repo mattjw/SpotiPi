@@ -1,4 +1,12 @@
-<h1>User</h1>
+<head>
+  <title>MKS</title>
+  <script type="text/javascript">
+    function enablePB() {
+      alert("LOL");
+    }
+  </script>
+</head>
+<h1>Get your spot on</h1>
 
 {% if latest_user_list %}
     <table border=1>
@@ -15,11 +23,13 @@
           </td>
           <td>
             <a href="/mks/user_edit/{{ user.id }}/">edit</a>
-			<a href="/mks/user_delete/{{ user.id }}/">delete</a>
+		      	<a href="/mks/user_delete/{{ user.id }}/">delete</a>
           </td>      
         </tr>
         {% endfor %}    
     </table>
+    <button onMouseDown="return enablePB()">Enable?</button>
+    <button>Next</button>
 
 {% else %}
     <a href="/mks/user_add/">+ Add User</a>
