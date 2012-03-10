@@ -1,0 +1,27 @@
+<h1>User</h1>
+
+{% if latest_user_list %}
+    <table border=1>
+        <tr>
+          <th>Name</th>
+          <th>&nbsp;</th>    
+        </tr>
+        {% for user in latest_user_list %} 
+        <tr>
+          <td>
+            <a href="/mks/user_edit/{{ user.id }}/">
+			          {{ user.name }}
+			      </a>
+          </td>
+          <td>
+            <a href="/mks/user_edit/{{ user.id }}/">edit</a>
+			<a href="/mks/user_delete/{{ user.id }}/">delete</a>
+          </td>      
+        </tr>
+        {% endfor %}    
+    </table>
+
+{% else %}
+    <a href="/mks/user_add/">+ Add User</a>
+    <p>No users created.</p>
+{% endif %}

@@ -1,0 +1,10 @@
+<h1>Edit User</h1>
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="/mks/user_edit/{{ user_id }}/" method="post">
+{% csrf_token %}
+<table>
+{{ user_form.as_table }}
+</table>
+<input type="submit" value="Save" />
+</form>
