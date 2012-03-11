@@ -136,5 +136,14 @@ div.playlists table {
 		border-top: 0;
 		border-left: 0;
 		border-right: 1px solid #C1DAD7;
-		background: none;
+		background: none;	
+	}
+
+	#footer {
+		position:absolute;
+		bottom:0;
+		width:80%;
+		height:60px;
+		background: #eee;
+		text-align: right;
 	}
