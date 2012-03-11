@@ -2,7 +2,6 @@ import usb, time, os
 from usb import core
 #import sys
 
-#test
 #####################################################
 ##          Parameters                             ##
 #####################################################
