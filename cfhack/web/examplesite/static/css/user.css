@@ -76,7 +76,7 @@ input:focus, textarea:focus {
 
 #enable.disabled{
 	height: 10%;
-	opacity: .5;
+	opacity: 1;
 }
 
 #enable.disabled:hover
