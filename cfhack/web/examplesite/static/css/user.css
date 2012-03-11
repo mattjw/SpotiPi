@@ -1,17 +1,62 @@
 body{
-	background-color: grey;
-	color: white;
 	font-family: Verdana, "Trebuchet MS", "Lucida Grande", Helvetica, sans-serif;
 	font-size: 90%;
-	margin-top: 5px;
+	text-align: center;
+	background-color:#eee;
 }
 
-header{
-	background-color: pink;
+#centered {
+	 margin: 0 auto;
+     width: 70%; /* Replace the xxxx with the the width of your site (eg 800px)*/
+     text-align:left;
+     border:1px;
+	 background-color:#eee;
+}
+
+#bannerimg {
+	width: 100%;
+	height: 35%;
+}
+
+#controls{
+	float: right;
+	height: 60%;
+}
+
+#enable.enabled{
+	height: 10%;
+	opacity: 1;
+}
+
+#enable.enabled:hover
+{
+	opacity: .2;
+}
+
+#enable.disabled{
+	height: 10%;
+	opacity: .5;
+}
+
+#enable.disabled:hover
+{
+	opacity: .2;
+}
+a {
+	text-decoration: none;
+}
+
+#next{
+	height: 10%;
+	opacity: 1;
+}
+
+#next:hover
+{
+	opacity: .2;
 }
 
 table{
 	margin-left:auto; 
-    margin-right:auto;
-	
+    margin-right:auto;	
 }
