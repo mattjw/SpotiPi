@@ -1,5 +1,5 @@
 {% load static %}
-  {% get_static_prefix as STATIC_PATH %}
+{% get_static_prefix as STATIC_PATH %}
 <head>
   <title>Motion Kitty Soundtrack</title>
   <link rel="stylesheet" type="text/css" href="{{ STATIC_PATH }}css/user.css" />
@@ -56,8 +56,10 @@
           $("#id_name").focus();
         {% endif %} 
       });
+      //clicks on tablew rows interpreted here and sent to update default_pl
       $('tr').click(function() {
         {% if user %}
+        //easiest way to get pl_id from the table without showing it to the user
           var row = $(this).attr("class");
           $.ajax({ 
                   url: 'http://127.0.0.1:8000/api/set_playlist', 
@@ -67,6 +69,7 @@
                       "PL_ID": row
                   },
                   success: function(result) { 
+                      //if someone can show me how to reload a table and just a table, let me know!
                       // $("#pl_table").innerHTML=xmlHttp.responseText;
                       location.reload();
                   },
@@ -108,6 +111,7 @@
           <table border=0 id="pl_table">
               {% for p in playlists_list %} 
               {% if p.pl_id == user.default_pl %}
+              <!-- pl_id is stored in class table to send to API -->
                 <tr class = {{ p.pl_id }} id="default">
               {% else %}
                 <tr class = {{ p.pl_id }}>

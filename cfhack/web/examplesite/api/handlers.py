@@ -9,6 +9,7 @@ class SpotHandler(BaseHandler):
         else:
             return "n"
 
+# all PUT requests handler here, anything other than the defined keywords are ignored
     def update(self, request, expression):
         if expression == 'enable':
             i = request.PUT.get('ID')
