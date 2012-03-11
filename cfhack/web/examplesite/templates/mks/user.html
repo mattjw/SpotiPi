@@ -86,7 +86,7 @@
     </script>
 </head>
   <body id="centered">
-      <img id="bannerimg" src="{{ STATIC_PATH}}img/bgrounded.png"/>
+      <a href="/mks/"><img id="bannerimg" src="{{ STATIC_PATH }}img/bgrounded.png"/></a>
       {% if user %} 
         <a href="/mks/user_edit/{{ user.id }}" id="account"><h2>Welcome, {{ user.name }}</h2></a>
       {% else %} 
