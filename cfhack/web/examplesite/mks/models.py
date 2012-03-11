@@ -11,7 +11,8 @@ class Playlists(models.Model):
 class User(models.Model):
     name = models.CharField(max_length=20)
     password = models.CharField(max_length=10)
-    default_pl = models.ForeignKey(Playlists, null=True)
+    default_pl = models.IntegerField(default=-1)
+    # default_pl = models.ForeignKey(Playlists, null=True)
     enabled = models.BooleanField(default=False)
     def __unicode__(self):
         return self.name

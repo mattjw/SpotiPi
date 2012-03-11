@@ -1,10 +1,22 @@
-<h1>Edit User</h1>
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% load static %}
+  {% get_static_prefix as STATIC_PATH %}
+<head>
+  <title>Motion Kitty Soundtrack</title>
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_PATH }}css/user.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script src="{{ STATIC_PATH }}js/jquery.columnhover.js"></script>
+</head>
+<body id="centered">
+	<img id="bannerimg" src="{{ STATIC_PATH}}img/bgrounded.png"/>
+	<form action="/mks/user_edit/{{ user_id }}/" method="post">
+	{% csrf_token %}
+	<table>
+	{{ user_form.as_table }}
+	</table>
+	<input type="submit" value="Save" />
+	</form>
+	<form action="/mks/user_delete/{{ user_id }}/" method="post">
+	<input type="submit" value="Delete" />
+	</form> 
+</body>
 
-<form action="/mks/user_edit/{{ user_id }}/" method="post">
-{% csrf_token %}
-<table>
-{{ user_form.as_table }}
-</table>
-<input type="submit" value="Save" />
-</form>
