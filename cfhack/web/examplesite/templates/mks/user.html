@@ -1,5 +1,5 @@
 {% load static %}
-  {% get_static_prefix as STATIC_PATH %}
+{% get_static_prefix as STATIC_PATH %}
 <head>
   <title>Motion Kitty Soundtrack</title>
   <link rel="stylesheet" type="text/css" href="{{ STATIC_PATH }}css/user.css" />
@@ -27,7 +27,6 @@
             type: 'PUT',  
             data: {"ID":{{user.id}}},
             success: function(result) { 
-                alert("success:"); 
                 location.reload();
             },
             failure: function() {
@@ -57,8 +56,10 @@
           $("#id_name").focus();
         {% endif %} 
       });
+      //clicks on tablew rows interpreted here and sent to update default_pl
       $('tr').click(function() {
         {% if user %}
+        //easiest way to get pl_id from the table without showing it to the user
           var row = $(this).attr("class");
           $.ajax({ 
                   url: 'http://127.0.0.1:8000/api/set_playlist', 
@@ -68,6 +69,7 @@
                       "PL_ID": row
                   },
                   success: function(result) { 
+                      //if someone can show me how to reload a table and just a table, let me know!
                       // $("#pl_table").innerHTML=xmlHttp.responseText;
                       location.reload();
                   },
@@ -84,7 +86,7 @@
     </script>
 </head>
   <body id="centered">
-      <img id="bannerimg" src="{{ STATIC_PATH}}img/bgrounded.png"/>
+      <a href="/mks/"><img id="bannerimg" src="{{ STATIC_PATH }}img/bgrounded.png"/></a>
       {% if user %} 
         <a href="/mks/user_edit/{{ user.id }}" id="account"><h2>Welcome, {{ user.name }}</h2></a>
       {% else %} 
@@ -109,6 +111,7 @@
           <table border=0 id="pl_table">
               {% for p in playlists_list %} 
               {% if p.pl_id == user.default_pl %}
+              <!-- pl_id is stored in class table to send to API -->
                 <tr class = {{ p.pl_id }} id="default">
               {% else %}
                 <tr class = {{ p.pl_id }}>
@@ -127,3 +130,7 @@
             <p>No playlists imported.</p>
       {% endif %}
 </body>
+<footer id="footer">
+  Created for the Open Sauce Hackathon 2012 by <a href="https://twitter.com/intent/user?screen_name=voxmjw">@voxmjw</a>, <a href="https://twitter.com/intent/user?screen_name=whitehankey">@whitehankey</a> and <a href="https://twitter.com/intent/user?screen_name=encima27">@encima27</a>
+</footer>
+

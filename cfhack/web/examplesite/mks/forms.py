@@ -2,6 +2,7 @@ from django.forms import ModelForm, ModelChoiceField
 from mks.models import User, Playlists
 from django import forms
 
+# not used
 class UserForm(ModelForm):
     name  = forms.CharField(label="Username" )
     password = forms.CharField( widget=forms.PasswordInput, label="Password")
@@ -9,6 +10,7 @@ class UserForm(ModelForm):
     class Meta:
         model = User
 
+# cannot find a way to modify the placeholder on two text input fields, django did not like the repetition
 class PartialUserForm(ModelForm):
     name  = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Username'}), label="" )
     password = forms.CharField( widget=forms.PasswordInput, label="")

@@ -7,7 +7,7 @@
   <script src="{{ STATIC_PATH }}js/jquery.columnhover.js"></script>
 </head>
 <body id="centered">
-	<img id="bannerimg" src="{{ STATIC_PATH}}img/bgrounded.png"/>
+	<a href="/mks/"><img id="bannerimg" src="{{ STATIC_PATH }}img/bgrounded.png"/></a>
 	<form action="/mks/user_edit/{{ user_id }}/" method="post">
 	{% csrf_token %}
 	<table>
@@ -19,4 +19,7 @@
 	<input type="submit" value="Delete" />
 	</form> 
 </body>
+<footer id="footer">
+  Created for the Open Sauce Hackathon 2012 by <a href="https://twitter.com/intent/user?screen_name=voxmjw">@voxmjw</a>, <a href="https://twitter.com/intent/user?screen_name=whitehankey">@whitehankey</a> and <a href="https://twitter.com/intent/user?screen_name=encima27">@encima27</a>
+</footer>
 
