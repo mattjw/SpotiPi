@@ -22,7 +22,6 @@ if mode == 'motion':
 	os.system( "/home/nyan/SpotiPi/cfhack/spotify_daemon/src/jukebox/jukebox_controller stop" )
 
 	# check if database says playback enabled
-	#SQL SHIT
 	print ">>> GRabbing data to make decision"
 
 	qry = "SELECT name, password, enabled, default_pl from users";
@@ -30,12 +29,6 @@ if mode == 'motion':
 	cur = con.cursor()
 	result = cur.execute(qry)
 	data = cur.fetchone()	
-	
-	
-	do_playback = True
-	username = "voxyn"
-	password = "bastard11"
-	playlist_id = 3
 
 #	(username, password, do_playback, playlist_id) = data
 #
@@ -46,6 +39,11 @@ if mode == 'motion':
 
 #	print data
 #	exit()
+	
+	do_playback = True
+	username = "???"
+	password = "???"
+	playlist_id = 3
 
 	# call jukebox functionm
 	if do_playback == 1 and playlist_id != -1:
@@ -72,9 +70,6 @@ else:
 
 print "fin"
 
-
-
-# get playlist iD
 
 
 
