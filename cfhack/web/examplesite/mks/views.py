@@ -25,7 +25,10 @@ def user_add(request):
         cmodel = form.save()
         #This is where you might chooose to do stuff.
         cmodel.save()
-        os.system("ls -a");
+        dr = os.getcwd()
+        os.chdir("home/nyan/SpotiPi/cfhack/spotify_daemon/src/")
+        os.system("/home/nyan/SpotiPi/cfhack/spotify_daemon/src/populate_pldb/populate_pldb -f /home/nyan/SpotiPi/cfhack/web/examplesite/example.db");
+        os.chdir(dr);
         return redirect(users)
 
     return render_to_response('mks/user_add.html',
