@@ -105,6 +105,11 @@ a {
 #default {
 	background-color: #0D4B7D;
 }
+
+#default{
+	color: #eee;
+}
+
 div.playlists table {
 		overflow:hidden;
 		border:1px solid #d3d3d3;
