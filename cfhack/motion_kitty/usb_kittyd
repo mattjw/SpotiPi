@@ -29,13 +29,6 @@ def no_move_switch():
 ##          Find and Grab USB Device               ##
 #####################################################
 
-if os.path.exists("./pid"):
-    os.remove("./pid")
-f = open("./pid","w")
-pid = os.getpid()
-f.write(str(pid))
-f.close()
-
 device = usb.core.find(idVendor=6465, idProduct=32801)
 if device.is_kernel_driver_active(0):
     try:
