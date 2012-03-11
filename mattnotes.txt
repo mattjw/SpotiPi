@@ -1,1 +1,1 @@
-make clean && make LIBSPOTIFY_PATH=../libspotify/ && ./populate_pldb/populate_pldb -u voxyn -p bastard11 -f a/path/
+make clean && make LIBSPOTIFY_PATH=../libspotify/ && ./populate_pldb/populate_pldb -u voxyn -p XXX -f a/path/
