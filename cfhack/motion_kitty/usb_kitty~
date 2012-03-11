@@ -1,4 +1,4 @@
-import os
+import os, sys
 
 f = open("./pid",'r')
 pid = int(f.readlines()[0])
