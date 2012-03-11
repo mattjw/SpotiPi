@@ -2,7 +2,6 @@ import usb, time, os
 from usb import core
 #import sys
 
-#test
 #####################################################
 ##          Parameters                             ##
 #####################################################
@@ -13,8 +12,15 @@ min_movement=1     # 2 Threshold for samples different to last second
 #####################################################
 ##          Movement response                      ##
 #####################################################
-def fire():
+def move_switch():
     print "MOVEMENT!"
+
+#####################################################
+##          Movement response                      ##
+#####################################################
+def no_move_switch():
+    print "No movement anymore :-("
+
 
 #####################################################
 ##          Find and Grab USB Device               ##
@@ -70,7 +76,7 @@ while 1:
                 #print changes
                 if changes>=threshold:
                         laststatus=not(laststatus)  # Flip laststatus
-                        fire()                      # fire movement response
+                        move_switch()                      # fire movement response
                 changes=0
                 elapsed_time=0
         else:                                       # if last status was movement
@@ -78,7 +84,7 @@ while 1:
                 #print changes
                 if changes>=false_threshold:
                         laststatus=not(laststatus)  # Flip laststatus
-                        fire()                      # fire movement response
+                        no_move_switch()                      # fire movement response
                 changes=0
                 elapsed_time=0
 	print "\t mode:", laststatus, "      block tot :", changes, "      ", time.clock()

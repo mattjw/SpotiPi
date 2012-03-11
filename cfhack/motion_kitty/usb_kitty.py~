@@ -12,8 +12,15 @@ min_movement=1     # 2 Threshold for samples different to last second
 #####################################################
 ##          Movement response                      ##
 #####################################################
-def fire():
+def move_switch():
     print "MOVEMENT!"
+
+#####################################################
+##          Movement response                      ##
+#####################################################
+def no_move_switch():
+    print "No movement anymore :-("
+
 
 #####################################################
 ##          Find and Grab USB Device               ##
