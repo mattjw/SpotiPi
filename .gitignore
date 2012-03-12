@@ -1,13 +1,16 @@
 #### PROJECT-SPECIFIC ####
 #....
 appkey.c
-cfhack/spotify_daemon/src/tmp/
-cfhack/spotify_daemon/src/populate_pldb/tmp/
-cfhack/spotify_daemon/src/spshell/tmp/
 *.db
 *.sqlite
 *.pid 
 cfhack/build/
+tmp/
+	# should match to directory tmp/ at any depth?
+
+# http://stackoverflow.com/questions/681262/difference-in-the-paths-in-gitignore-file
+# * matches a single file or folder
+# ** matches any string of DIRECTORIES
 
 #### Packages ####
 
