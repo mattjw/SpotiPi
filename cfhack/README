@@ -94,5 +94,6 @@ Spotify and store them in a database for user by other components.
 The Djagno server is not responsible for actually streaming the music. 
 (The motion sensor handles invoking this; see below.)
 
-Connect USB motion sensor. Start motion sensor. Requires root.
+Connect USB motion sensor. Start motion sensor (motion kitty). Requires root.
+This will check for motion and initiate (or stop) playback as necessary.
 
