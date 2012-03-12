@@ -1,1 +1,0 @@
-make clean && make LIBSPOTIFY_PATH=../libspotify/ && ./populate_pldb/populate_pldb -u  -p  -f a/path/
