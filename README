@@ -1,0 +1,19 @@
+Premise:
+Sonos Wireless Home Wifi for under £40.
+Use cheap, easy-to-obtain hardware to stream Spotify tracks to each room in your
+house. Built to be ported to Raspberry Pi (eventually).
+
+A work in progress.
+
+First iteration (see: /cfhack/) built with love (and tears) at the Cardiff
+University "Open Sauce" Hackathon, March 10th - 11th 2012
+(http://www.cs.cf.ac.uk/hackathon/). Executed on a IGEPv2 single-board
+computer (ARM TI OMAP3530 CPU) running Debian Squeeze (via Emdebian Grip). 
+
+Developers:
+Mark Greenwood (@whitehankey)
+Chris Gwilliams (@encima27, http://encima.co.uk)
+Matt Williams (@voxmjw, http://www.mattjw.net)
+
+With thanks to:
+Samuel Hockham (@SHockham)
