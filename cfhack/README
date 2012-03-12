@@ -1,0 +1,98 @@
+### DEPENDENCIES ###
+This list may not be exhaustive.
+
+emdebian grip debian squeeze:
+	alsa-base
+	alsa-utils 
+	libasound2
+	libasound2-dev 
+	pkg-config 
+	libreadline6
+	libreadline6-dev 
+	build-essential 
+	libusb-1.0-0-dev
+	libusb-1.0-0 
+	apache2
+	python
+
+elsewhere:
+	pyusb
+	django
+	django-piston
+	libspotify (eabi-armv7)
+
+
+### COMPONENTS ###
+
+motion kitty
+	[ cfhack/motion_kitty/ ]
+	Daemon that periodically polls the USB motion sensor.
+	Sends motion / no motion triggers to checker.py.
+
+checker
+	[ cfhack/spotify_daemon/checker.py ]
+	Receives triggers for motion / no motion.
+	Determines whether music should be started or not.
+	(If music is to be played, checker.py invokes the
+	Spotify Jukebox to start music.)
+	Reads a database for the user's settings
+	(username, password, playback enabled, current 
+	playlist) and checker.py uses these to determine
+	if music is to be played.
+	(The web interface handles updating the database
+	with user settings.)
+
+spotify jukebox
+	[ cfhack/spotify_daemon/src/jukebox ]
+	Command-line tool to play a playlist from Spotify.
+	Args: Spotify username, Spotify password,
+	playlist index.
+	Playlist index refers to the index in the user's list of
+	playlists, where 0 indicates the first playlist.
+	Songs are played at (naive) random.
+	Can be started and stopped as a daemon using 
+	jukebox_controller.
+
+spotify populate_pldb
+	[ cfhack/spotify_daemon/src/populate_pldb ]
+	Command-line tool to fill a target sqlite3 database with
+	a Spotify user's list of playlists.
+	Args: Spotify username, Spotify password, database fpath
+
+web
+	[ cfhack/web/examplesite/ ]
+	A Django application that implements the web interface.
+	Allows the user to set their spotify username and password,
+	choose the current playlist, and enable/disable playback. 
+	Settings are placed in a database that is later read by
+	checker.py as part of its task of determine what to play. 
+	
+
+### A NOTE ON SPOTIFY COMPONENTS ###
+
+Build:
+	cd to: cfhack/spotify_daemon/src/
+	make clean
+	make LIBSPOTIFY_PATH=../libspotify/
+
+Note that an appkey is required. Premium Spotify subscribers can obtain one 
+from the Spotify website. Place the appkey file (appkey.c) in .../src/
+
+Due to as yet unexplained reason, the compiled binaries (jukebox and populate_pldb)
+will only operate correctly if they are executed with the CWD as 
+cfhack/spotify_daemon/src/
+
+(The Spotify API generates some auxiliary files, so this problem is probably
+due to it looking in the wrong place if the CWD is not correct.)
+
+
+### USAGE ###
+
+Start Django server. This will allow the user to log in and choose their playlist.
+On log in, it invokes populate_pldb to grab the list of playlists from
+Spotify and store them in a database for user by other components.
+The Djagno server is not responsible for actually streaming the music. 
+(The motion sensor handles invoking this; see below.)
+
+Connect USB motion sensor. Start motion sensor. Requires root.
+
