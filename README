@@ -7,7 +7,7 @@ A work in progress.
 
 First iteration (see: /cfhack/) built with love (and tears) at the Cardiff
 University "Open Sauce" Hackathon, March 10th - 11th 2012
-(http://www.cs.cf.ac.uk/hackathon/). Executed on a IGEPv2 single-board
+(http://www.cs.cf.ac.uk/hackathon/). Executed on an IGEPv2 single-board
 computer (ARM TI OMAP3530 CPU) running Debian Squeeze (via Emdebian Grip). 
 
 Developers:
